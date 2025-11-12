@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualBasic.ApplicationServices;
 using MySql.Data.MySqlClient;
 using System;
+using System.Data;
 using System.Windows.Forms;
 
 namespace Digital_Receipt_and_Expense_Tracker_System
@@ -96,6 +97,30 @@ namespace Digital_Receipt_and_Expense_Tracker_System
                     dgvItems.Rows.Clear();
                     txtCustomer.Clear();
                     lblTotal.Text = "Total: ₱0.00";
+
+                    // Prepare items for receipt
+                    DataTable receiptTable = new DataTable();
+                    receiptTable.Columns.Add("Item Name");
+                    receiptTable.Columns.Add("Quantity");
+                    receiptTable.Columns.Add("Price");
+                    receiptTable.Columns.Add("Subtotal");
+
+                    foreach (DataGridViewRow row in dgvItems.Rows)
+                    {
+                        if (!row.IsNewRow)
+                        {
+                            receiptTable.Rows.Add(
+                                row.Cells["item_name"].Value,
+                                row.Cells["quantity"].Value,
+                                row.Cells["price"].Value,
+                                row.Cells["subtotal"].Value
+                            );
+                        }
+                    }
+
+                    // Show receipt form
+                    ReceiptForm receiptForm = new ReceiptForm(receiptTable, txtCustomer.Text, GetTotalAmount());
+                    receiptForm.ShowDialog();
                 }
                 catch (Exception ex)
                 {
@@ -123,6 +148,11 @@ namespace Digital_Receipt_and_Expense_Tracker_System
             this.Hide();
             DashboardForm dashboard = new DashboardForm("User", "Role");
             dashboard.Show();
+        }
+
+        private void SalesForm_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

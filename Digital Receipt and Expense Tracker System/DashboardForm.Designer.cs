@@ -76,6 +76,7 @@
             btnReceipts.TabIndex = 3;
             btnReceipts.Text = "\U0001f9fe Receipts";
             btnReceipts.UseVisualStyleBackColor = false;
+            btnReceipts.Click += btnReceipts_Click;
             // 
             // btnLogout
             // 
