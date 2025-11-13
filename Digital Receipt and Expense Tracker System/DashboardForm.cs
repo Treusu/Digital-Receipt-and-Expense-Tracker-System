@@ -46,5 +46,13 @@ namespace Digital_Receipt_and_Expense_Tracker_System
             receiptsForm.FormClosed += (s, args) => this.Show();
             receiptsForm.Show();
         }
+
+        private void btnExpenses_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+            ExpensesForm expensesForm = new ExpensesForm(loggedInUserId);
+            expensesForm.FormClosed += (s, args) => this.Show();
+            expensesForm.Show();
+        }
     }
 }

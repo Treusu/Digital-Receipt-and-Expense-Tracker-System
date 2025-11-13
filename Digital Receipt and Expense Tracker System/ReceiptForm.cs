@@ -64,7 +64,7 @@ namespace Digital_Receipt_and_Expense_Tracker_System
 
             y += 10;
             e.Graphics.DrawLine(Pens.Black, leftMargin, y, leftMargin + 380, y);
-            y += 30;
+            y += 30;            
 
             // Total
             e.Graphics.DrawString("Total: ₱" + totalAmount.ToString("N2"), fontBold, Brushes.Black, leftMargin + 220, y);

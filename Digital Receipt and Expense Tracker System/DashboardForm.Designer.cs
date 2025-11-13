@@ -63,6 +63,7 @@
             btnExpenses.TabIndex = 2;
             btnExpenses.Text = "📊 Expenses";
             btnExpenses.UseVisualStyleBackColor = false;
+            btnExpenses.Click += btnExpenses_Click;
             // 
             // btnReceipts
             // 

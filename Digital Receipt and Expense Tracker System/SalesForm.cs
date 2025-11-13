@@ -93,12 +93,7 @@ namespace Digital_Receipt_and_Expense_Tracker_System
 
                     transaction.Commit();
 
-                    MessageBox.Show("✅ Sale recorded successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    dgvItems.Rows.Clear();
-                    txtCustomer.Clear();
-                    lblTotal.Text = "Total: ₱0.00";
-
-                    // Prepare items for receipt
+                    // Prepare items for receipt BEFORE clearing
                     DataTable receiptTable = new DataTable();
                     receiptTable.Columns.Add("Item Name");
                     receiptTable.Columns.Add("Quantity");
@@ -118,9 +113,19 @@ namespace Digital_Receipt_and_Expense_Tracker_System
                         }
                     }
 
-                    // Show receipt form
-                    ReceiptForm receiptForm = new ReceiptForm(receiptTable, txtCustomer.Text, GetTotalAmount());
+                    // Store the total and customer name BEFORE clearing
+                    decimal totalAmount = GetTotalAmount();
+                    string customerName = txtCustomer.Text.Trim();
+
+                    // Show receipt form with correct data
+                    ReceiptForm receiptForm = new ReceiptForm(receiptTable, customerName, totalAmount);
                     receiptForm.ShowDialog();
+
+                    // Clear after printing
+                    MessageBox.Show("✅ Sale recorded successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    dgvItems.Rows.Clear();
+                    txtCustomer.Clear();
+                    lblTotal.Text = "Total: ₱0.00";
                 }
                 catch (Exception ex)
                 {
@@ -155,4 +160,4 @@ namespace Digital_Receipt_and_Expense_Tracker_System
 
         }
     }
-}
+}   
