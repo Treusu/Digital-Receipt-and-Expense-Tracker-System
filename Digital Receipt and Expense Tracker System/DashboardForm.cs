@@ -42,7 +42,10 @@ namespace Digital_Receipt_and_Expense_Tracker_System
         private void btnReceipts_Click(object sender, EventArgs e)
         {
             this.Hide();
-            ReceiptsForm receiptsForm = new ReceiptsForm();
+
+            // Pass the user ID to ReceiptsForm just like the other forms
+            ReceiptsForm receiptsForm = new ReceiptsForm(loggedInUserId);
+
             receiptsForm.FormClosed += (s, args) => this.Show();
             receiptsForm.Show();
         }

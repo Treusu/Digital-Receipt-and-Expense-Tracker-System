@@ -29,7 +29,6 @@ namespace Digital_Receipt_and_Expense_Tracker_System
             {
                 try
                 {
-                    conn.Open();
                     string query = @"SELECT expense_id AS 'ID',
                                             expense_name AS 'Expense Name',
                                             category AS 'Category',
@@ -70,7 +69,6 @@ namespace Digital_Receipt_and_Expense_Tracker_System
             {
                 try
                 {
-                    conn.Open();
                     string query = @"INSERT INTO expenses (user_id, expense_name, category, amount, expense_date, notes)
                                      VALUES (@userId, @name, @category, @amount, NOW(), @notes)";
 
@@ -112,7 +110,6 @@ namespace Digital_Receipt_and_Expense_Tracker_System
                 {
                     try
                     {
-                        conn.Open();
                         string query = "DELETE FROM expenses WHERE expense_id = @id AND user_id = @userId";
                         MySqlCommand cmd = new MySqlCommand(query, conn);
                         cmd.Parameters.AddWithValue("@id", expenseId);
