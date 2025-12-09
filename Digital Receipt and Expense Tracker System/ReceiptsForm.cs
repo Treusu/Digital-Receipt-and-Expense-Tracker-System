@@ -13,65 +13,97 @@ namespace Digital_Receipt_and_Expense_Tracker_System
 {
     public partial class ReceiptsForm : Form
     {
-        public ReceiptsForm()
+        private int userId;
+
+        public ReceiptsForm(int loggedUserId)
         {
             InitializeComponent();
+            userId = loggedUserId;
             LoadReceipts();
         }
 
-        private void LoadReceipts()
+        private void LoadReceipts(string search = "")
         {
             using (MySqlConnection conn = DBConnection.GetConnection())
             {
-                string query = "SELECT sale_id AS 'Receipt ID', customer_name AS 'Customer', total_amount AS 'Total', sale_date AS 'Date' FROM sales ORDER BY sale_date DESC";
-                MySqlDataAdapter adapter = new MySqlDataAdapter(query, conn);
-                DataTable dt = new DataTable();
-                adapter.Fill(dt);
-                dgvReceipts.DataSource = dt;
+                try
+                {
+                    string query = @"
+                        SELECT sale_id, customer_name, sale_date, total_amount
+                        FROM sales 
+                        WHERE user_id = @user
+                        AND customer_name LIKE @search
+                        ORDER BY sale_date DESC";
+
+                    MySqlCommand cmd = new MySqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue("@user", userId);
+                    cmd.Parameters.AddWithValue("@search", "%" + search + "%");
+
+                    MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+                    DataTable table = new DataTable();
+                    adapter.Fill(table);
+
+                    dgvReceipts.DataSource = table;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error loading receipts: " + ex.Message);
+                }
             }
         }
 
-        private void dgvReceipts_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        private void btnSearch_Click(object sender, EventArgs e)
         {
-            if (e.RowIndex >= 0)
+            LoadReceipts(txtSearch.Text.Trim());
+        }
+
+        private void btnRefresh_Click(object sender, EventArgs e)
+        {
+            txtSearch.Clear();
+            LoadReceipts();
+        }
+
+        private void dgvReceipts_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.ColumnIndex == dgvReceipts.Columns["viewColumn"].Index && e.RowIndex >= 0)
             {
-                int saleId = Convert.ToInt32(dgvReceipts.Rows[e.RowIndex].Cells["Receipt ID"].Value);
-                ShowReceiptDetails(saleId);
+                int saleId = Convert.ToInt32(dgvReceipts.Rows[e.RowIndex].Cells["sale_id"].Value);
+                OpenReceipt(saleId);
             }
         }
 
-        private void ShowReceiptDetails(int saleId)
+        private void OpenReceipt(int saleId)
         {
             using (MySqlConnection conn = DBConnection.GetConnection())
             {
-                // Get sale details
-                string saleQuery = "SELECT customer_name, total_amount, sale_date FROM sales WHERE sale_id = @saleId";
+                // Load sale info
+                string saleQuery = "SELECT customer_name, total_amount FROM sales WHERE sale_id = @id";
                 MySqlCommand saleCmd = new MySqlCommand(saleQuery, conn);
-                saleCmd.Parameters.AddWithValue("@saleId", saleId);
-                MySqlDataReader reader = saleCmd.ExecuteReader();
+                saleCmd.Parameters.AddWithValue("@id", saleId);
 
+                MySqlDataReader reader = saleCmd.ExecuteReader();
                 string customer = "";
                 decimal total = 0;
-                DateTime saleDate = DateTime.Now;
 
                 if (reader.Read())
                 {
-                    customer = reader["customer_name"].ToString();
-                    total = Convert.ToDecimal(reader["total_amount"]);
-                    saleDate = Convert.ToDateTime(reader["sale_date"]);
+                    customer = reader.GetString("customer_name");
+                    total = reader.GetDecimal("total_amount");
                 }
                 reader.Close();
 
-                // Get sale items
-                string itemQuery = "SELECT item_name AS 'Item Name', quantity AS 'Quantity', price AS 'Price', subtotal AS 'Subtotal' FROM sale_items WHERE sale_id = @saleId";
-                MySqlDataAdapter adapter = new MySqlDataAdapter(itemQuery, conn);
-                adapter.SelectCommand.Parameters.AddWithValue("@saleId", saleId);
+                // Load item info
+                string itemsQuery = "SELECT item_name, quantity, price, subtotal FROM sale_items WHERE sale_id = @id";
+                MySqlCommand itemsCmd = new MySqlCommand(itemsQuery, conn);
+                itemsCmd.Parameters.AddWithValue("@id", saleId);
+
+                MySqlDataAdapter adapter = new MySqlDataAdapter(itemsCmd);
                 DataTable itemsTable = new DataTable();
                 adapter.Fill(itemsTable);
 
-                // Open the detailed receipt form
-                ReceiptForm receiptForm = new ReceiptForm(itemsTable, customer, total);
-                receiptForm.ShowDialog();
+                // Open receipt preview
+                ReceiptForm receipt = new ReceiptForm(itemsTable, customer, total);
+                receipt.ShowDialog();
             }
         }
 
