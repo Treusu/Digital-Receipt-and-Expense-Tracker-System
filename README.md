@@ -1,43 +1,43 @@
-# 💼 Digital Receipt and Expense Tracker System
+#  Digital Receipt and Expense Tracker System
 
 A modern C# Windows Forms application designed to help businesses **record sales**, **generate digital receipts**, and **track expenses efficiently**.  
 Developed as a **capstone project** for the Bachelor of Science in Information Technology program.
 
 ---
 
-## 🧠 Overview
+##  Overview
 
 The **Digital Receipt and Expense Tracker System** provides a seamless way to record customer transactions, generate receipts, and monitor expenses.  
 It integrates with **MySQL (via XAMPP)** and uses **C# (Windows Forms)** for a clean, desktop-based interface.
 
 ---
 
-## ✨ Features
+##  Features
 
-✅ **User Login System**  
+ **User Login System**  
 - Secure authentication with database integration  
 - Supports role-based access (Admin, Cashier, etc.)
 
-✅ **Sales Management**  
+ **Sales Management**  
 - Add multiple items per sale  
 - Automatically compute subtotals and totals  
 - Linked to user accounts for accountability
 
-✅ **Digital Receipt Generation**  
+ **Digital Receipt Generation**  
 - Generates printable or PDF receipts for each transaction  
 - Automatically timestamps and records sales
 
-✅ **Expense Tracking Dashboard** *(coming soon)*  
+ **Expense Tracking Dashboard** *(coming soon)*  
 - Displays total sales and expense summaries  
 - Graphical representation of income trends
 
-✅ **Database Integration**  
+ **Database Integration**  
 - Fully connected to MySQL via MySQL Connector/.NET  
 - Uses relational structure for `users`, `sales`, and `sale_items`
 
 ---
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 | Component | Technology |
 |------------|-------------|
@@ -49,7 +49,7 @@ It integrates with **MySQL (via XAMPP)** and uses **C# (Windows Forms)** for a c
 
 ---
 
-## 🧩 System Architecture
+##  System Architecture
 
 ```mermaid
 flowchart TD
