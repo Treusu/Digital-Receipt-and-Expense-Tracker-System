@@ -1,4 +1,5 @@
-﻿namespace Digital_Receipt_and_Expense_Tracker_System
+﻿using System.Windows.Forms.DataVisualization.Charting;
+namespace Digital_Receipt_and_Expense_Tracker_System
 {
     partial class AddItemForm
     {
