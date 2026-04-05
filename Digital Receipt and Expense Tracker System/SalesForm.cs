@@ -1,5 +1,4 @@
-﻿using Microsoft.VisualBasic.ApplicationServices;
-using MySql.Data.MySqlClient;
+﻿using MySql.Data.MySqlClient;
 using System;
 using System.Data;
 using System.Windows.Forms;
@@ -9,6 +8,7 @@ namespace Digital_Receipt_and_Expense_Tracker_System
     public partial class SalesForm : Form
     {
         private int userId;
+
         public SalesForm(int loggedInUserId)
         {
             InitializeComponent();
@@ -46,9 +46,7 @@ namespace Digital_Receipt_and_Expense_Tracker_System
             foreach (DataGridViewRow row in dgvItems.Rows)
             {
                 if (row.Cells["subtotal"].Value != null)
-                {
                     total += Convert.ToDecimal(row.Cells["subtotal"].Value);
-                }
             }
             lblTotal.Text = $"Total: ₱{total:N2}";
         }
@@ -61,15 +59,19 @@ namespace Digital_Receipt_and_Expense_Tracker_System
                 return;
             }
 
+            // Use the user-selected date from the DateTimePicker
+            DateTime saleDate = dtpSaleDate.Value;
+
             using (MySqlConnection conn = DBConnection.GetConnection())
             {
                 MySqlTransaction transaction = conn.BeginTransaction();
                 try
                 {
-                    // Insert sale
-                    string saleQuery = "INSERT INTO sales (customer_name, sale_date, total_amount, user_id) VALUES (@customer, NOW(), @total, @user)";
+                    // Insert sale using the chosen date
+                    string saleQuery = "INSERT INTO sales (customer_name, sale_date, total_amount, user_id) VALUES (@customer, @saleDate, @total, @user)";
                     MySqlCommand saleCmd = new MySqlCommand(saleQuery, conn, transaction);
                     saleCmd.Parameters.AddWithValue("@customer", txtCustomer.Text.Trim());
+                    saleCmd.Parameters.AddWithValue("@saleDate", saleDate);
                     saleCmd.Parameters.AddWithValue("@total", GetTotalAmount());
                     saleCmd.Parameters.AddWithValue("@user", userId);
                     saleCmd.ExecuteNonQuery();
@@ -113,18 +115,16 @@ namespace Digital_Receipt_and_Expense_Tracker_System
                         }
                     }
 
-                    // Store the total and customer name BEFORE clearing
                     decimal totalAmount = GetTotalAmount();
                     string customerName = txtCustomer.Text.Trim();
 
-                    // Show receipt form with correct data
                     ReceiptForm receiptForm = new ReceiptForm(receiptTable, customerName, totalAmount);
                     receiptForm.ShowDialog();
 
-                    // Clear after printing
                     MessageBox.Show("✅ Sale recorded successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     dgvItems.Rows.Clear();
                     txtCustomer.Clear();
+                    dtpSaleDate.Value = DateTime.Now; // Reset date picker to current time
                     lblTotal.Text = "Total: ₱0.00";
                 }
                 catch (Exception ex)
@@ -141,9 +141,7 @@ namespace Digital_Receipt_and_Expense_Tracker_System
             foreach (DataGridViewRow row in dgvItems.Rows)
             {
                 if (row.Cells["subtotal"].Value != null)
-                {
                     total += Convert.ToDecimal(row.Cells["subtotal"].Value);
-                }
             }
             return total;
         }
@@ -157,7 +155,6 @@ namespace Digital_Receipt_and_Expense_Tracker_System
 
         private void SalesForm_Load(object sender, EventArgs e)
         {
-
         }
     }
-}   
+}

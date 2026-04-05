@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using MySql.Data.MySqlClient;
 
@@ -65,7 +59,9 @@ namespace Digital_Receipt_and_Expense_Tracker_System
 
         private void dgvReceipts_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.ColumnIndex == dgvReceipts.Columns["viewColumn"].Index && e.RowIndex >= 0)
+            if (e.RowIndex < 0) return;
+
+            if (e.ColumnIndex == dgvReceipts.Columns["viewColumn"].Index)
             {
                 int saleId = Convert.ToInt32(dgvReceipts.Rows[e.RowIndex].Cells["sale_id"].Value);
                 OpenReceipt(saleId);
@@ -76,7 +72,6 @@ namespace Digital_Receipt_and_Expense_Tracker_System
         {
             using (MySqlConnection conn = DBConnection.GetConnection())
             {
-                // Load sale info
                 string saleQuery = "SELECT customer_name, total_amount FROM sales WHERE sale_id = @id";
                 MySqlCommand saleCmd = new MySqlCommand(saleQuery, conn);
                 saleCmd.Parameters.AddWithValue("@id", saleId);
@@ -92,7 +87,6 @@ namespace Digital_Receipt_and_Expense_Tracker_System
                 }
                 reader.Close();
 
-                // Load item info
                 string itemsQuery = "SELECT item_name, quantity, price, subtotal FROM sale_items WHERE sale_id = @id";
                 MySqlCommand itemsCmd = new MySqlCommand(itemsQuery, conn);
                 itemsCmd.Parameters.AddWithValue("@id", saleId);
@@ -101,9 +95,62 @@ namespace Digital_Receipt_and_Expense_Tracker_System
                 DataTable itemsTable = new DataTable();
                 adapter.Fill(itemsTable);
 
-                // Open receipt preview
                 ReceiptForm receipt = new ReceiptForm(itemsTable, customer, total);
                 receipt.ShowDialog();
+            }
+        }
+
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            if (dgvReceipts.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Please select a sale to delete.", "No Selection",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            int saleId = Convert.ToInt32(dgvReceipts.SelectedRows[0].Cells["sale_id"].Value);
+            string customerName = dgvReceipts.SelectedRows[0].Cells["customer_name"].Value.ToString();
+
+            DialogResult confirm = MessageBox.Show(
+                $"Are you sure you want to delete the sale for \"{customerName}\"?\n\nThis will also delete all associated sale items and cannot be undone.",
+                "Confirm Delete",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning);
+
+            if (confirm != DialogResult.Yes) return;
+
+            using (MySqlConnection conn = DBConnection.GetConnection())
+            {
+                MySqlTransaction transaction = conn.BeginTransaction();
+                try
+                {
+                    // Delete sale items first (foreign key constraint)
+                    string deleteItems = "DELETE FROM sale_items WHERE sale_id = @id";
+                    MySqlCommand cmdItems = new MySqlCommand(deleteItems, conn, transaction);
+                    cmdItems.Parameters.AddWithValue("@id", saleId);
+                    cmdItems.ExecuteNonQuery();
+
+                    // Then delete the sale itself
+                    string deleteSale = "DELETE FROM sales WHERE sale_id = @id AND user_id = @userId";
+                    MySqlCommand cmdSale = new MySqlCommand(deleteSale, conn, transaction);
+                    cmdSale.Parameters.AddWithValue("@id", saleId);
+                    cmdSale.Parameters.AddWithValue("@userId", userId);
+                    cmdSale.ExecuteNonQuery();
+
+                    transaction.Commit();
+
+                    MessageBox.Show("🗑 Sale deleted successfully!", "Deleted",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    LoadReceipts(txtSearch.Text.Trim());
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    MessageBox.Show("Error deleting sale: " + ex.Message, "Database Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
 

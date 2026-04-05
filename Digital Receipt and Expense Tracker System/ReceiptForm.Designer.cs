@@ -3,13 +3,6 @@
     partial class ReceiptForm
     {
         private System.ComponentModel.IContainer components = null;
-        private Label lblBusinessName;
-        private Label lblDate;
-        private Label lblCustomer;
-        private Label lblTotal;
-        private DataGridView dgvReceiptItems;
-        private Button btnClose;
-        private Button btnPrint;
 
         protected override void Dispose(bool disposing)
         {
@@ -20,78 +13,95 @@
 
         private void InitializeComponent()
         {
-            this.lblBusinessName = new Label();
-            this.lblDate = new Label();
-            this.lblCustomer = new Label();
-            this.lblTotal = new Label();
-            this.dgvReceiptItems = new DataGridView();
-            this.btnClose = new Button();
-            this.btnPrint = new Button();
-
+            this.lblBusinessName = new System.Windows.Forms.Label();
+            this.lblDate = new System.Windows.Forms.Label();
+            this.lblCustomer = new System.Windows.Forms.Label();
+            this.dgvReceiptItems = new System.Windows.Forms.DataGridView();
+            this.lblTotal = new System.Windows.Forms.Label();
+            this.btnPrint = new System.Windows.Forms.Button();
+            this.btnClose = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvReceiptItems)).BeginInit();
             this.SuspendLayout();
 
-
-            // btnPrint
-            this.btnPrint.Text = "Print Receipt";
-            this.btnPrint.Location = new Point(50, 350);
-            this.btnPrint.Size = new Size(90, 30);
-            this.btnPrint.Click += new EventHandler(this.btnPrint_Click);
-            this.Controls.Add(this.btnPrint);
-
             // lblBusinessName
-            this.lblBusinessName.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
-            this.lblBusinessName.Location = new Point(100, 10);
-            this.lblBusinessName.Size = new Size(250, 30);
+            this.lblBusinessName.AutoSize = true;
+            this.lblBusinessName.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Bold);
+            this.lblBusinessName.ForeColor = System.Drawing.Color.SteelBlue;
+            this.lblBusinessName.Location = new System.Drawing.Point(20, 15);
             this.lblBusinessName.Text = "Business Name";
-            this.lblBusinessName.TextAlign = ContentAlignment.MiddleCenter;
 
             // lblDate
-            this.lblDate.Location = new Point(20, 50);
-            this.lblDate.Size = new Size(300, 20);
+            this.lblDate.AutoSize = true;
+            this.lblDate.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.lblDate.ForeColor = System.Drawing.Color.Gray;
+            this.lblDate.Location = new System.Drawing.Point(20, 50);
+            this.lblDate.Text = "Date";
 
             // lblCustomer
-            this.lblCustomer.Location = new Point(20, 70);
-            this.lblCustomer.Size = new Size(300, 20);
+            this.lblCustomer.AutoSize = true;
+            this.lblCustomer.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.lblCustomer.Location = new System.Drawing.Point(20, 75);
+            this.lblCustomer.Text = "Customer:";
 
             // dgvReceiptItems
-            this.dgvReceiptItems.Location = new Point(20, 100);
-            this.dgvReceiptItems.Size = new Size(360, 200);
-            this.dgvReceiptItems.ReadOnly = true;
             this.dgvReceiptItems.AllowUserToAddRows = false;
             this.dgvReceiptItems.AllowUserToDeleteRows = false;
-            this.dgvReceiptItems.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            this.dgvReceiptItems.ReadOnly = true;
+            this.dgvReceiptItems.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dgvReceiptItems.Location = new System.Drawing.Point(20, 110);
+            this.dgvReceiptItems.Size = new System.Drawing.Size(560, 280);
+            this.dgvReceiptItems.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
 
             // lblTotal
-            this.lblTotal.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            this.lblTotal.Location = new Point(20, 310);
-            this.lblTotal.Size = new Size(360, 30);
-            this.lblTotal.TextAlign = ContentAlignment.MiddleRight;
+            this.lblTotal.AutoSize = true;
+            this.lblTotal.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
+            this.lblTotal.ForeColor = System.Drawing.Color.SeaGreen;
+            this.lblTotal.Location = new System.Drawing.Point(20, 405);
+            this.lblTotal.Text = "Total: ₱0.00";
+
+            // btnPrint
+            this.btnPrint.Location = new System.Drawing.Point(20, 450);
+            this.btnPrint.Size = new System.Drawing.Size(130, 35);
+            this.btnPrint.Text = "🖨 Print Receipt";
+            this.btnPrint.BackColor = System.Drawing.Color.SteelBlue;
+            this.btnPrint.ForeColor = System.Drawing.Color.White;
+            this.btnPrint.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnPrint.Click += new System.EventHandler(this.btnPrint_Click);
 
             // btnClose
+            this.btnClose.Location = new System.Drawing.Point(165, 450);
+            this.btnClose.Size = new System.Drawing.Size(100, 35);
             this.btnClose.Text = "Close";
-            this.btnClose.Location = new Point(250, 350);
-            this.btnClose.Click += new EventHandler(this.btnClose_Click);
+            this.btnClose.BackColor = System.Drawing.Color.SlateGray;
+            this.btnClose.ForeColor = System.Drawing.Color.White;
+            this.btnClose.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnClose.Click += new System.EventHandler((s, e) => this.Close());
 
             // ReceiptForm
-            this.ClientSize = new Size(400, 400);
+            this.ClientSize = new System.Drawing.Size(610, 510);
             this.Controls.Add(this.lblBusinessName);
             this.Controls.Add(this.lblDate);
             this.Controls.Add(this.lblCustomer);
             this.Controls.Add(this.dgvReceiptItems);
             this.Controls.Add(this.lblTotal);
+            this.Controls.Add(this.btnPrint);
             this.Controls.Add(this.btnClose);
-            this.StartPosition = FormStartPosition.CenterScreen;
             this.Text = "Receipt";
-            this.Load += new EventHandler(this.ReceiptForm_Load);
-
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.MaximizeBox = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.Load += new System.EventHandler(this.ReceiptForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dgvReceiptItems)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
+        private System.Windows.Forms.Label lblBusinessName;
+        private System.Windows.Forms.Label lblDate;
+        private System.Windows.Forms.Label lblCustomer;
+        private System.Windows.Forms.DataGridView dgvReceiptItems;
+        private System.Windows.Forms.Label lblTotal;
+        private System.Windows.Forms.Button btnPrint;
+        private System.Windows.Forms.Button btnClose;
     }
 }
